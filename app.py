@@ -28,49 +28,129 @@ div[data-testid="stDecoration"],
 #MainMenu,
 footer { display: none !important; height: 0 !important; }
 
+/* ── Hide native sidebar entirely ─────────────────────── */
 section[data-testid="stSidebar"],
 button[data-testid="collapsedControl"],
-div[data-testid="collapsedControl"] {
-  display: none !important; width: 0 !important;
-}
+div[data-testid="collapsedControl"] { display: none !important; }
 
-/* push content below our navbar */
+/* push content — leave room for the hamburger button */
 .main .block-container {
-  padding-top: 72px !important;
-  padding-left: 2rem !important;
+  padding-top: 1.5rem !important;
+  padding-left: 4rem !important;
   padding-right: 2rem !important;
   max-width: 1200px !important;
 }
 
-/* ── Custom Top Navbar ─────────────────────────────────── */
-#ds-navbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 2.5rem; height: 58px;
-  background: rgba(5,5,5,0.95); backdrop-filter: blur(18px);
-  border-bottom: 1px solid #1e2035;
-  box-sizing: border-box;
+/* ── Hamburger label ──────────────────────────────────── */
+#_nav_chk { display: none; }
+#_nav_btn {
+  position: fixed; top: 16px; left: 16px; z-index: 9999;
+  width: 40px; height: 40px;
+  background: #07070f;
+  border: 1px solid #2a2d4a;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px;
+  transition: border-color 0.2s, background 0.2s;
 }
-#ds-navbar .ds-logo {
-  font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-  color: #4ECCA3; letter-spacing: 0.06em; font-weight: 700;
-  white-space: nowrap; flex-shrink: 0;
+#_nav_btn:hover { background: #0d0d1a; border-color: #4ECCA3; }
+#_nav_btn span {
+  display: block; width: 18px; height: 2px;
+  background: #4ECCA3; border-radius: 2px;
+  transition: transform 0.25s, opacity 0.2s;
+  pointer-events: none;
 }
-#ds-navbar .ds-logo span { color: #4a5568; font-weight: 300; }
-#ds-navbar .ds-links {
-  display: flex; align-items: center; list-style: none;
-  margin: 0; padding: 0; gap: 0; overflow-x: auto;
+#_nav_chk:checked ~ #_nav_btn span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+#_nav_chk:checked ~ #_nav_btn span:nth-child(2) { opacity: 0; }
+#_nav_chk:checked ~ #_nav_btn span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Overlay backdrop ─────────────────────────────────── */
+#_nav_bd {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.55);
 }
-#ds-navbar .ds-links li a {
-  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
-  letter-spacing: 0.07em; color: #8892a4; text-decoration: none;
-  padding: 0 0.85rem; height: 58px; display: flex; align-items: center;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+#_nav_chk:checked ~ #_nav_bd { display: block; }
+
+/* ── Slide-in panel ──────────────────────────────────────  */
+#_nav_panel {
+  position: fixed; top: 0; left: 0; height: 100vh; width: 290px;
+  background: #07070f; border-right: 1px solid #131526;
+  z-index: 9100; overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(.4,0,.2,1);
 }
-#ds-navbar .ds-links li a:hover { color: #e8eaf0; }
-#ds-navbar .ds-links li a.ds-active {
-  color: #4ECCA3; border-bottom-color: #4ECCA3;
+#_nav_chk:checked ~ #_nav_panel { transform: translateX(0); }
+
+/* ── Sidebar header ──────────────────────────────────── */
+.sb-head {
+  padding: 1.2rem 1.2rem 1rem;
+  border-bottom: 1px solid #131526;
+}
+.sb-wordmark {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.56rem;
+  letter-spacing: 0.22em; color: #333a52; text-transform: uppercase;
+  margin-bottom: 0.28rem;
+}
+.sb-brand {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+  font-weight: 700; color: #4ECCA3; letter-spacing: 0.04em;
+}
+.sb-brand span { color: #2a3040; font-weight: 300; }
+.sb-section {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.56rem;
+  letter-spacing: 0.22em; color: #2a3040; text-transform: uppercase;
+  padding: 1rem 1.2rem 0.4rem;
+}
+.sb-list { padding: 0 0.5rem 2rem; }
+
+/* Nav items */
+a.sb-item {
+  display: flex !important; align-items: center !important;
+  gap: 0.75rem !important; padding: 0.65rem 0.8rem !important;
+  text-decoration: none !important; border-radius: 6px !important;
+  border: 1px solid transparent !important; margin-bottom: 1px !important;
+  transition: background 0.15s, border-color 0.15s !important;
+  color: inherit !important;
+}
+a.sb-item:hover { background: rgba(78,204,163,0.05) !important; }
+a.sb-item.sb-active {
+  background: rgba(78,204,163,0.09) !important;
+  border-color: rgba(78,204,163,0.18) !important;
+}
+.sb-icon {
+  font-size: 0.95rem; width: 20px; text-align: center;
+  flex-shrink: 0; color: #2e3448; line-height: 1;
+}
+a.sb-item.sb-active .sb-icon { color: #4ECCA3 !important; }
+.sb-text { flex: 1; min-width: 0; }
+a.sb-item .sb-label {
+  font-family: 'Inter', sans-serif !important; font-size: 0.8rem !important;
+  font-weight: 600 !important; color: #5a6478 !important;
+  display: block !important; white-space: nowrap !important;
+  overflow: hidden !important; text-overflow: ellipsis !important;
+  line-height: 1.3 !important;
+}
+a.sb-item.sb-active .sb-label { color: #e8eaf0 !important; }
+a.sb-item:hover .sb-label { color: #b8c4d4 !important; }
+a.sb-item .sb-sub {
+  font-family: 'JetBrains Mono', monospace !important; font-size: 0.58rem !important;
+  color: #2e3448 !important; display: block !important;
+  white-space: nowrap !important; overflow: hidden !important;
+  text-overflow: ellipsis !important; margin-top: 0.1rem !important;
+}
+a.sb-item.sb-active .sb-sub { color: #3d6060 !important; }
+a.sb-item:hover .sb-sub { color: #3d4a5a !important; }
+a.sb-item .sb-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.55rem;
+  color: #2e3448; background: rgba(20,22,40,0.9);
+  border: 1px solid #1a1d30; border-radius: 3px;
+  padding: 0.08rem 0.38rem; flex-shrink: 0; line-height: 1.7;
+}
+a.sb-item.sb-active .sb-badge {
+  color: #4ECCA3 !important;
+  background: rgba(78,204,163,0.08) !important;
+  border-color: rgba(78,204,163,0.22) !important;
 }
 
 /* Headers */
@@ -250,6 +330,77 @@ div[data-testid="stHorizontalBlock"] { gap: 0.5rem; }
   margin-bottom: 1.2rem;
   letter-spacing: 0.15em;
 }
+
+/* ── Study Hub ──────────────────────────────────────────── */
+.sh-stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin: 1.2rem 0; }
+.sh-stat {
+  background: rgba(27,27,47,0.7); border: 1px solid #2a2d4a;
+  border-radius: 6px; padding: 1.2rem; text-align: center;
+}
+.sh-stat-val {
+  font-family: 'JetBrains Mono', monospace; font-size: 1.8rem;
+  font-weight: 700; color: #4ECCA3; line-height: 1;
+}
+.sh-stat-lbl { font-size: 0.75rem; color: #8892a4; margin-top: 0.4rem; }
+.sh-bar-wrap { background: rgba(42,45,74,0.5); border-radius: 4px; height: 6px; margin: 0.3rem 0 0; overflow: hidden; }
+.sh-bar-fill { height: 100%; background: linear-gradient(90deg,#2a8a6b,#4ECCA3); border-radius: 4px; transition: width 0.4s; }
+.sh-topic-row {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.75rem 1rem; border: 1px solid #2a2d4a;
+  border-left: 3px solid #4ECCA3; border-radius: 4px;
+  background: rgba(27,27,47,0.5); margin-bottom: 0.5rem;
+}
+.sh-topic-name { flex: 1; font-size: 0.88rem; font-weight: 600; color: #e8eaf0; }
+.sh-topic-pills { display: flex; gap: 0.4rem; }
+.sh-pill {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.58rem;
+  padding: 0.18rem 0.55rem; border-radius: 3px; border: 1px solid;
+  letter-spacing: 0.05em;
+}
+.sh-pill.done { color: #4ECCA3; border-color: rgba(78,204,163,0.4); background: rgba(78,204,163,0.08); }
+.sh-pill.todo { color: #2e3448; border-color: #1a1d30; background: rgba(20,22,40,0.6); }
+.sh-ach-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.6rem 0 1.5rem; }
+.sh-ach {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  padding: 0.3rem 0.9rem; border-radius: 20px; border: 1px solid;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.sh-ach.earned { color: #4ECCA3; border-color: rgba(78,204,163,0.4); background: rgba(78,204,163,0.08); }
+.sh-ach.locked { color: #2e3448; border-color: #1a1d30; background: rgba(15,16,28,0.8); }
+.sh-road-group { margin-bottom: 2rem; }
+.sh-road-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.2em; color: #4ECCA3; text-align: center;
+  margin-bottom: 0.8rem; opacity: 0.7;
+}
+.sh-road-row { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+.sh-road-node {
+  background: rgba(27,27,47,0.8); border: 1px solid #2a2d4a;
+  border-radius: 8px; padding: 1rem 1.2rem; width: 200px;
+  text-align: center; position: relative;
+}
+.sh-road-node:hover { border-color: rgba(78,204,163,0.3); }
+.sh-road-icon { font-size: 1.2rem; margin-bottom: 0.4rem; color: #4ECCA3; }
+.sh-road-name { font-size: 0.85rem; font-weight: 700; color: #e8eaf0; }
+.sh-road-week { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #2e3448; margin-top: 0.2rem; }
+.sh-road-prog { margin-top: 0.6rem; }
+.sh-arrow { text-align: center; color: #2e3448; font-size: 1.2rem; margin: 0.4rem 0; }
+.sh-concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin: 1rem 0; }
+.sh-concept-card {
+  background: rgba(13,13,34,0.7); border: 1px solid #2a2d4a;
+  border-left: 3px solid #4ECCA3; border-radius: 4px; padding: 0.8rem 1rem;
+}
+.sh-concept-title { font-size: 0.75rem; font-weight: 700; color: #4ECCA3; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.sh-concept-body { font-size: 0.82rem; color: #b8c4d4; }
+.sh-quiz-q { background: rgba(27,27,47,0.7); border: 1px solid #2a2d4a; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+.sh-quiz-num { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: #4ECCA3; margin-bottom: 0.4rem; }
+.sh-quiz-text { font-size: 0.88rem; color: #e8eaf0; font-weight: 500; }
+.sh-practice-card { background: rgba(27,27,47,0.5); border: 1px solid #2a2d4a; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
+.sh-practice-q { font-size: 0.88rem; color: #e8eaf0; font-weight: 500; margin-bottom: 0.5rem; }
+.sh-practice-sol { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #4ECCA3; background: rgba(78,204,163,0.06); border: 1px solid rgba(78,204,163,0.15); border-radius: 4px; padding: 0.6rem 0.8rem; margin-top: 0.4rem; }
+.sh-overview { border-left: 3px solid #4ECCA3; background: rgba(13,13,34,0.7); border-radius: 4px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; }
+.sh-overview-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; color: #4ECCA3; margin-bottom: 0.3rem; }
+.sh-overview-text { font-size: 0.88rem; color: #b8c4d4; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -402,6 +553,104 @@ def transitive_closure(n: int, pairs: list[tuple]) -> list[tuple]:
                 if reach[i][k] and reach[k][j]:
                     reach[i][j] = True
     return [(i, j) for i in range(n) for j in range(n) if reach[i][j]]
+
+def draw_venn_matplotlib(set_a_items: list, set_b_items: list, operation: str):
+    """Draw a Venn diagram using matplotlib and return the figure."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Circle
+
+    As = set(str(x) for x in set_a_items)
+    Bs = set(str(x) for x in set_b_items)
+    only_a  = sorted(As - Bs)
+    both_ab = sorted(As & Bs)
+    only_b  = sorted(Bs - As)
+
+    CYAN   = '#4ECCA3'
+    PURPLE = '#AFA9EC'
+    ORANGE = '#ff9f4a'
+    BG     = '#0a0a14'
+
+    hl_map = {
+        'union':        (True,  True,  True ),
+        'intersection': (False, True,  False),
+        'diff_ab':      (True,  False, False),
+        'diff_ba':      (False, False, True ),
+    }
+    hl_a, hl_ab, hl_b = hl_map.get(operation, (False, False, False))
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+    fig.patch.set_facecolor(BG)
+    ax.set_facecolor(BG)
+    ax.set_xlim(-3.0, 3.0)
+    ax.set_ylim(-2.1, 2.1)
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    cx_a, cx_b, cy, r = -0.78, 0.78, 0.0, 1.48
+
+    # Filled regions
+    ax.add_patch(Circle((cx_a, cy), r, color=CYAN,   alpha=0.38 if hl_a  else 0.06, linewidth=0, zorder=2))
+    ax.add_patch(Circle((cx_b, cy), r, color=PURPLE, alpha=0.38 if hl_b  else 0.06, linewidth=0, zorder=2))
+
+    # Intersection highlight via clip path
+    if hl_ab:
+        clip_circle = Circle((cx_b, cy), r, transform=ax.transData)
+        inter = Circle((cx_a, cy), r, color=ORANGE, alpha=0.58, linewidth=0, zorder=3)
+        inter.set_clip_path(clip_circle)
+        ax.add_patch(inter)
+
+    # Outlines
+    ax.add_patch(Circle((cx_a, cy), r, fill=False, edgecolor=CYAN,   linewidth=2.5, zorder=5))
+    ax.add_patch(Circle((cx_b, cy), r, fill=False, edgecolor=PURPLE, linewidth=2.5, zorder=5))
+
+    # Circle labels
+    ax.text(cx_a - 0.9, cy + r + 0.22, 'A', color=CYAN,   fontsize=20,
+            fontweight='bold', fontfamily='monospace', ha='center', va='center')
+    ax.text(cx_b + 0.9, cy + r + 0.22, 'B', color=PURPLE, fontsize=20,
+            fontweight='bold', fontfamily='monospace', ha='center', va='center')
+
+    def region_text(items, limit=5):
+        if not items:
+            return '∅'
+        s = '\n'.join(items[:limit])
+        if len(items) > limit:
+            s += f'\n+{len(items) - limit} more'
+        return s
+
+    col_a  = CYAN   if hl_a  else '#4a5568'
+    col_ab = ORANGE if hl_ab else '#4a5568'
+    col_b  = PURPLE if hl_b  else '#4a5568'
+
+    # Region element text
+    ax.text(cx_a - 0.68, cy + 0.15, region_text(only_a),  color=col_a,  fontsize=8.5,
+            fontfamily='monospace', ha='center', va='center', linespacing=1.7, zorder=6)
+    ax.text(0.0,          cy + 0.15, region_text(both_ab), color=col_ab, fontsize=8.5,
+            fontfamily='monospace', ha='center', va='center', linespacing=1.7, zorder=6)
+    ax.text(cx_b + 0.68,  cy + 0.15, region_text(only_b),  color=col_b,  fontsize=8.5,
+            fontfamily='monospace', ha='center', va='center', linespacing=1.7, zorder=6)
+
+    # Sub-region labels
+    ax.text(cx_a - 0.68, cy - r + 0.38, 'A − B', color=col_a,  fontsize=7.5,
+            alpha=0.75, fontfamily='monospace', ha='center', va='center', style='italic')
+    ax.text(0.0,          cy - r + 0.38, 'A ∩ B', color=col_ab, fontsize=7.5,
+            alpha=0.75, fontfamily='monospace', ha='center', va='center', style='italic')
+    ax.text(cx_b + 0.68,  cy - r + 0.38, 'B − A', color=col_b,  fontsize=7.5,
+            alpha=0.75, fontfamily='monospace', ha='center', va='center', style='italic')
+
+    op_titles = {
+        'union':        'Highlighted: A ∪ B  (Union)',
+        'intersection': 'Highlighted: A ∩ B  (Intersection)',
+        'diff_ab':      'Highlighted: A − B  (Difference)',
+        'diff_ba':      'Highlighted: B − A  (Difference)',
+    }
+    ax.set_title(op_titles.get(operation, 'Venn Diagram'),
+                 color='#e8eaf0', fontsize=11, pad=10, fontfamily='monospace')
+
+    plt.tight_layout(pad=0.4)
+    return fig
+
 
 def compose_relations(r1: list[tuple], r2: list[tuple]) -> list[tuple]:
     """R1 ∘ R2 = {(a,c) | ∃b: (a,b) ∈ R1 ∧ (b,c) ∈ R2}"""
@@ -619,35 +868,87 @@ If there is no multi-statement argument, set "argument_form" and "form_name" to 
 # ═══════════════════════════════════════════════════════════
 # NAVIGATION (query-param based, top navbar)
 # ═══════════════════════════════════════════════════════════
-NAV_PAGES = [
-    ("home",         "Home"),
-    ("sets",         "Set Theory"),
-    ("relations",    "Relations"),
-    ("logic",        "Propositional Logic"),
-    ("inference",    "Rules of Inference"),
-    ("proofs",       "Proof Methods"),
-    ("induction",    "Induction"),
-    ("sequences",    "Sequences"),
-    ("combinatorics","Combinatorics"),
-    ("graphs",       "Graph Theory"),
-    ("ai",           "AI Solver"),
+
+# ── Overlay navigation ──────────────────────────────────────────────
+NAV_META = [
+    ("home",          "Home",                  "△",  "Overview · Team",                ""),
+    ("sets",          "Set Theory",            "∩",  "Sets · Venn · Identities",       "W2-3"),
+    ("relations",     "Relations",             "↔",  "Properties · Closures · Posets", "W4-8"),
+    ("logic",         "Propositional Logic",   "∧",  "Truth Tables · Predicates",      "W9-11"),
+    ("inference",     "Rules of Inference",    "∴",  "Modus Ponens · Arguments",       "W12-13"),
+    ("proofs",        "Proof Methods",         "□",  "Direct · Contradiction",         "W14-15"),
+    ("induction",     "Mathematical Induction","Σ",  "Base Case · Inductive Step",     "W16"),
+    ("sequences",     "Sequences",             "∿",  "Arithmetic · Fibonacci",         "W8"),
+    ("combinatorics", "Combinatorics",         "⊕",  "Perms · Combinations",           ""),
+    ("graphs",        "Graph Theory",          "◇",  "Vertices · Eulerian Paths",      ""),
+    ("ai",            "AI Problem Solver",     "⚡", "Ask Anything",                    ""),
+    ("studyhub",      "Study Hub",             "◎",  "Progress · Roadmap · Session",   "NEW"),
 ]
 
 section = st.query_params.get("page", "home")
-if section not in [k for k, _ in NAV_PAGES]:
+if section not in [m[0] for m in NAV_META]:
     section = "home"
 
-# Build navbar HTML
-nav_links = "".join(
-    f'<li><a href="?page={key}" class="{"ds-active" if section == key else ""}">{label}</a></li>'
-    for key, label in NAV_PAGES
-)
-st.markdown(f"""
-<nav id="ds-navbar">
-  <div class="ds-logo">DS<span>://</span>logic.arc</div>
-  <ul class="ds-links">{nav_links}</ul>
-</nav>
-""", unsafe_allow_html=True)
+def build_overlay_nav(current: str) -> None:
+    items = ""
+    for key, label, icon, sub, badge in NAV_META:
+        active_cls = "sb-active" if current == key else ""
+        badge_html = f'<span class="sb-badge">{badge}</span>' if badge else ""
+        items += f"""
+<a href="?page={key}" target="_top" class="sb-item {active_cls}">
+  <span class="sb-icon">{icon}</span>
+  <span class="sb-text">
+    <span class="sb-label">{label}</span>
+    <span class="sb-sub">{sub}</span>
+  </span>
+  {badge_html}
+</a>"""
+
+    html = f"""
+<!-- Hidden checkbox drives open/close via CSS -->
+<input type="checkbox" id="_nav_chk">
+
+<!-- Hamburger label -->
+<label for="_nav_chk" id="_nav_btn" title="Navigation">
+  <span></span><span></span><span></span>
+</label>
+
+<!-- Backdrop: clicking it unchecks the checkbox -->
+<label for="_nav_chk" id="_nav_bd"></label>
+
+<!-- Slide-in panel -->
+<div id="_nav_panel">
+  <div class="sb-head" style="display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div class="sb-wordmark">Master Discrete Mathematics</div>
+      <div class="sb-brand">DS<span>://</span>logic.arc</div>
+    </div>
+    <label for="_nav_chk" style="background:none;border:none;color:#4a5568;cursor:pointer;font-size:1.1rem;padding:0 4px;line-height:1;">✕</label>
+  </div>
+  <div class="sb-section">// Course Modules</div>
+  <div class="sb-list">{items}
+  </div>
+</div>
+"""
+    st.markdown(html, unsafe_allow_html=True)
+
+build_overlay_nav(section)
+
+# ── Footer HTML (shared across all pages) ─────────────────
+FOOTER_HTML = """
+<div style='text-align:center;padding:2rem 0 1rem;'>
+  <div style='font-family:"JetBrains Mono",monospace;font-size:0.72rem;color:#4ECCA3;letter-spacing:0.05em;'>
+    DISCRETE STRUCTURES: THE ARCHITECTURE OF LOGIC
+  </div>
+  <div style='font-family:"JetBrains Mono",monospace;font-size:0.65rem;color:#4a5568;margin-top:0.6rem;'>
+    <span style='color:#8892a4;'>Farhan Haroon</span> \u00b7 FA25-BSAI-0060 &nbsp;|&nbsp;
+    <span style='color:#8892a4;'>Huzaifa Zaki</span> \u00b7 FA25-BSAI-0051 &nbsp;|&nbsp;
+    <span style='color:#8892a4;'>Bissam ul Haq</span> \u00b7 FA25-BSAI-0076 &nbsp;|&nbsp;
+    <span style='color:#8892a4;'>Aaleen</span> \u00b7 FA25-BSAI-0077
+  </div>
+  <div style='margin-top:0.8rem;font-size:0.65rem;color:#2a2d4a;'>\u2200x [ Discrete(x) \u2192 Beautiful(x) ] \u2014 BSAI \u00b7 CS Department</div>
+</div>
+"""
 
 # ═══════════════════════════════════════════════════════════
 # HOME
@@ -782,15 +1083,15 @@ elif section == "sets":
     with tab2:
         st.markdown("""
         <div class='card'>
-          <div class='sec-tag'>VENN_DIAGRAM · REGION LABELS</div>
+          <div class='sec-tag'>VENN_DIAGRAM · INTERACTIVE VISUALIZER</div>
           <p style='color:#8892a4;font-size:0.85rem;'>
-          A Venn diagram represents sets as overlapping circles. Each region has a specific meaning:
+          Enter sets A and B, choose an operation, and click <b style='color:#4ECCA3;'>Visualize</b>
+          to see a colour-coded Venn diagram with your actual elements placed in each region.
           </p>
           <ul style='color:#8892a4;font-size:0.85rem;margin-left:1.2rem;line-height:2;'>
-            <li><span style='color:#4ECCA3;'>Region I</span> — Only in A (A − B)</li>
-            <li><span style='color:#b8c4d4;'>Region II</span> — In both A and B (A ∩ B)</li>
-            <li><span style='color:#AFA9EC;'>Region III</span> — Only in B (B − A)</li>
-            <li><span style='color:#ff9f4a;'>Region IV</span> — In neither (complement of A ∪ B)</li>
+            <li><span style='color:#4ECCA3;'>Green region</span> — Only in A (A − B)</li>
+            <li><span style='color:#ff9f4a;'>Orange region</span> — In both A and B (A ∩ B)</li>
+            <li><span style='color:#AFA9EC;'>Purple region</span> — Only in B (B − A)</li>
           </ul>
         </div>""", unsafe_allow_html=True)
 
@@ -801,31 +1102,47 @@ elif section == "sets":
         with col2:
             op_v = st.selectbox("Operation to highlight", ["Union (A ∪ B)", "Intersection (A ∩ B)", "Difference (A − B)", "Complement region (B − A)"])
 
-        if st.button("Show Regions", key="venn_run"):
+        if st.button("🔵 Visualize Venn Diagram", key="venn_run"):
             A = parse_set(set_a_v)
             B = parse_set(set_b_v)
             As, Bs = set(A), set(B)
             only_a = [x for x in A if x not in Bs]
-            both = [x for x in A if x in Bs]
+            both   = [x for x in A if x in Bs]
             only_b = [x for x in B if x not in As]
 
-            op_map = {
-                "Union (A ∪ B)": only_a + both + only_b,
-                "Intersection (A ∩ B)": both,
-                "Difference (A − B)": only_a,
+            op_key_map = {
+                "Union (A ∪ B)":          "union",
+                "Intersection (A ∩ B)":   "intersection",
+                "Difference (A − B)":     "diff_ab",
+                "Complement region (B − A)": "diff_ba",
+            }
+            op_result_map = {
+                "Union (A ∪ B)":          only_a + both + only_b,
+                "Intersection (A ∩ B)":   both,
+                "Difference (A − B)":     only_a,
                 "Complement region (B − A)": only_b,
             }
-            highlighted = op_map[op_v]
+            op_key     = op_key_map[op_v]
+            highlighted = op_result_map[op_v]
+
+            # ── Matplotlib Venn diagram ────────────────────────
+            import matplotlib.pyplot as plt
+            fig = draw_venn_matplotlib(A, B, op_key)
+            st.pyplot(fig, use_container_width=True)
+            plt.close(fig)
+
+            # ── Text region summary ────────────────────────────
             st.markdown(f"""
-            <div class='result-box'>
+            <div class='result-box' style='margin-top:0.8rem;'>
               <div style='color:#4ECCA3;margin-bottom:0.5rem;'>Region I — Only in A (A − B):</div>
               <div style='margin-bottom:0.8rem;'>{fmt_set(only_a)}</div>
-              <div style='color:#b8c4d4;margin-bottom:0.5rem;'>Region II — In both (A ∩ B):</div>
+              <div style='color:#ff9f4a;margin-bottom:0.5rem;'>Region II — In both (A ∩ B):</div>
               <div style='margin-bottom:0.8rem;'>{fmt_set(both)}</div>
               <div style='color:#AFA9EC;margin-bottom:0.5rem;'>Region III — Only in B (B − A):</div>
               <div style='margin-bottom:0.8rem;'>{fmt_set(only_b)}</div>
-              <div style='color:#ff9f4a;margin-bottom:0.5rem;'>Highlighted ({op_v}):</div>
-              <div style='font-weight:600;font-size:1rem;'>{fmt_set(highlighted)}</div>
+              <hr style='border-color:#2a2d4a;margin:0.6rem 0;'/>
+              <div style='color:#e8eaf0;margin-bottom:0.3rem;font-weight:600;'>Highlighted ({op_v}):</div>
+              <div style='font-weight:700;font-size:1rem;color:#e8eaf0;'>{fmt_set(highlighted)}</div>
               <div style='color:#4a5568;margin-top:0.5rem;'>|result| = {len(highlighted)}</div>
             </div>""", unsafe_allow_html=True)
 
@@ -2035,19 +2352,731 @@ Or a single compound statement like:
                         {details_html}
                         </div>""", unsafe_allow_html=True)
 
-# ── Footer ──────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════
+# STUDY HUB
+# ═══════════════════════════════════════════════════════════
+elif section == "studyhub":
+
+    # ── Data definitions ────────────────────────────────────
+    STUDY_TOPICS = [
+        ("sets",          "Set Theory",             "∩",  "W2-3"),
+        ("relations",     "Relations",              "↔",  "W4-8"),
+        ("logic",         "Propositional Logic",    "∧",  "W9-11"),
+        ("inference",     "Rules of Inference",     "∴",  "W12-13"),
+        ("proofs",        "Proof Methods",          "□",  "W14-15"),
+        ("induction",     "Mathematical Induction", "Σ",  "W16"),
+        ("sequences",     "Sequences & Summations", "∿",  "W8"),
+        ("combinatorics", "Combinatorics",          "⊕",  ""),
+        ("graphs",        "Graph Theory",           "◇",  ""),
+    ]
+
+    ROADMAP_GROUPS = [
+        ("FOUNDATIONS",       ["sets", "combinatorics"]),
+        ("RELATIONSHIPS",     ["relations", "sequences"]),
+        ("LOGIC & REASONING", ["logic", "inference"]),
+        ("PROOF TECHNIQUES",  ["proofs", "induction"]),
+        ("ADVANCED",          ["graphs"]),
+    ]
+
+    TOPIC_OVERVIEWS = {
+        "sets":          "A set is an unordered collection of distinct objects. Sets are the foundation of all mathematics and computer science.",
+        "relations":     "A relation describes how elements of one set are associated with elements of another. Relations model real-world connections and are fundamental to databases and graph theory.",
+        "logic":         "Propositional logic studies the truth values of statements and the rules that combine them. It is the basis of all mathematical reasoning.",
+        "inference":     "Rules of inference are templates for building valid logical arguments — guaranteeing that if premises are true, the conclusion must also be true.",
+        "proofs":        "A mathematical proof is a rigorous argument establishing the truth of a statement. Mastering proof techniques is the core skill of discrete mathematics.",
+        "induction":     "Mathematical induction is a powerful technique for proving statements about all natural numbers, using a base case and an inductive step.",
+        "sequences":     "Sequences are ordered lists of numbers following a pattern. Summation formulas provide closed-form expressions for their totals.",
+        "combinatorics": "Combinatorics counts arrangements and selections. It underpins probability, cryptography, and algorithm analysis.",
+        "graphs":        "Graph theory studies networks of vertices and edges, modelling everything from social networks to circuit layouts and shortest paths.",
+    }
+
+    TOPIC_CONCEPTS = {
+        "sets": [
+            ("Notation",      "A = {1,2,3} — curly braces list elements; ∈ means 'belongs to', ∉ means 'does not belong to'."),
+            ("Subset",        "A ⊆ B means every element of A is also in B. A ⊂ B means proper subset (A ≠ B)."),
+            ("Union",         "A ∪ B = {x | x ∈ A or x ∈ B} — everything in either set."),
+            ("Intersection",  "A ∩ B = {x | x ∈ A and x ∈ B} — only what's in both."),
+            ("Difference",    "A − B = {x | x ∈ A and x ∉ B} — elements in A but not B."),
+            ("Complement",    "Ā = U − A — everything in the universe NOT in A."),
+        ],
+        "relations": [
+            ("Binary Relation", "R ⊆ A × B — a set of ordered pairs (a,b) linking elements of A to elements of B."),
+            ("Reflexive",       "∀a ∈ A: (a,a) ∈ R — every element relates to itself."),
+            ("Symmetric",       "(a,b) ∈ R → (b,a) ∈ R — if a relates to b, then b relates to a."),
+            ("Transitive",      "(a,b) ∈ R ∧ (b,c) ∈ R → (a,c) ∈ R — chains carry through."),
+            ("Antisymmetric",   "(a,b) ∈ R ∧ (b,a) ∈ R → a = b — no mutual distinct pairs."),
+            ("Equivalence",     "Reflexive + Symmetric + Transitive — partitions the set into equivalence classes."),
+        ],
+        "logic": [
+            ("Conjunction",    "p ∧ q — true only when both p and q are true."),
+            ("Disjunction",    "p ∨ q — true when at least one of p or q is true."),
+            ("Negation",       "¬p — flips the truth value of p."),
+            ("Implication",    "p → q — false only when p is true and q is false."),
+            ("Biconditional",  "p ↔ q — true when p and q have the same truth value."),
+            ("De Morgan's",    "¬(p∧q) ≡ ¬p∨¬q and ¬(p∨q) ≡ ¬p∧¬q."),
+        ],
+        "inference": [
+            ("Modus Ponens",          "p, p→q ∴ q — the most fundamental rule."),
+            ("Modus Tollens",         "¬q, p→q ∴ ¬p — contrapositive reasoning."),
+            ("Hypothetical Syllogism","p→q, q→r ∴ p→r — chain of implications."),
+            ("Disjunctive Syllogism", "p∨q, ¬p ∴ q — eliminate a disjunct."),
+            ("Addition",              "p ∴ p∨q — a truth implies any disjunction with it."),
+            ("Simplification",        "p∧q ∴ p — extract one conjunct from a conjunction."),
+        ],
+        "proofs": [
+            ("Direct Proof",          "Assume p, derive q step by step using definitions and theorems."),
+            ("Contradiction",         "Assume ¬p (the negation), derive a logical contradiction."),
+            ("Contrapositive",        "Prove p→q by proving its contrapositive ¬q→¬p instead."),
+            ("Exhaustive Cases",      "Split into all possible cases and prove each individually."),
+            ("Existence Proof",       "Constructive: exhibit a specific example. Non-constructive: show one must exist."),
+            ("Uniqueness Proof",      "Show existence, then assume two solutions and prove they are equal."),
+        ],
+        "induction": [
+            ("Base Case",       "Prove P(1) (or P(0)) is true — anchors the chain."),
+            ("Inductive Step",  "Assume P(k) is true (inductive hypothesis), prove P(k+1) follows."),
+            ("Strong Induction","Assume P(1)…P(k) all true, prove P(k+1) — useful for recurrences."),
+            ("Well-Ordering",   "Every non-empty subset of ℕ has a least element — equivalent to induction."),
+            ("Sum Formula",     "1+2+…+n = n(n+1)/2 — the classic induction example."),
+            ("Power of 2",      "2^n > n for all n ≥ 1 — proved by induction."),
+        ],
+        "sequences": [
+            ("Arithmetic",    "aₙ = a₁ + (n−1)d — constant difference d between terms."),
+            ("Geometric",     "aₙ = a₁ · r^(n−1) — constant ratio r between terms."),
+            ("Fibonacci",     "F(n) = F(n−1) + F(n−2), F(1)=F(2)=1 — each term is sum of previous two."),
+            ("Sum of n",      "Σᵢ₌₁ⁿ i = n(n+1)/2 — sum of first n natural numbers."),
+            ("Sum of Squares","Σᵢ₌₁ⁿ i² = n(n+1)(2n+1)/6 — sum of first n squares."),
+            ("Geometric Sum", "Σᵢ₌₀ⁿ rⁱ = (r^(n+1)−1)/(r−1) for r≠1."),
+        ],
+        "combinatorics": [
+            ("Multiplication Rule", "If task A has m ways and task B has n ways, together they have m×n ways."),
+            ("Permutation",         "P(n,r) = n!/(n−r)! — ordered arrangements of r items from n."),
+            ("Combination",         "C(n,r) = n!/(r!(n−r)!) — unordered selections of r items from n."),
+            ("Pigeonhole Principle","n+1 objects in n holes → at least one hole has ≥ 2 objects."),
+            ("Inclusion-Exclusion", "|A∪B| = |A| + |B| − |A∩B| — avoid double-counting."),
+            ("Binomial Theorem",    "(x+y)ⁿ = Σ C(n,k) xᵏ y^(n−k) — coefficient is combination."),
+        ],
+        "graphs": [
+            ("Vertex & Edge",      "A graph G = (V,E) has a vertex set V and edge set E ⊆ V×V."),
+            ("Degree",             "deg(v) = number of edges incident to vertex v. Σdeg = 2|E|."),
+            ("Path & Cycle",       "Path: sequence of distinct vertices connected by edges. Cycle: path that returns to start."),
+            ("Eulerian Path",      "Visits every edge exactly once. Exists iff exactly 0 or 2 vertices have odd degree."),
+            ("Eulerian Circuit",   "Eulerian path starting and ending at same vertex. Requires all degrees even."),
+            ("Complete Graph Kₙ", "Every pair of vertices is connected. Has n(n−1)/2 edges."),
+        ],
+    }
+
+    QUIZ_DATA = {
+        "sets": [
+            {"q": "What does A ∩ B represent?",
+             "opts": ["Elements in A or B", "Elements in both A and B", "Elements in A but not B", "Elements not in A or B"], "ans": 1},
+            {"q": "If A = {1,2,3} and B = {3,4,5}, what is A ∪ B?",
+             "opts": ["{3}", "{1,2,3,4,5}", "{1,2}", "{4,5}"], "ans": 1},
+            {"q": "The complement Ā equals:",
+             "opts": ["A ∪ U", "U − A", "A ∩ U", "A × U"], "ans": 1},
+            {"q": "A ∩ ∅ equals:",
+             "opts": ["A", "U", "∅", "A ∪ ∅"], "ans": 2},
+            {"q": "How many subsets does a set with 3 elements have?",
+             "opts": ["3", "6", "8", "9"], "ans": 2},
+            {"q": "A ⊆ B means:",
+             "opts": ["A and B are equal", "Every element of A is also in B", "A contains B", "A and B are disjoint"], "ans": 1},
+            {"q": "The power set P({a,b}) contains how many elements?",
+             "opts": ["2", "4", "3", "1"], "ans": 1},
+            {"q": "A − B is equal to:",
+             "opts": ["A ∩ B", "A ∩ B'", "A' ∩ B", "A ∪ B'"], "ans": 1},
+            {"q": "De Morgan's Law: (A ∪ B)' equals:",
+             "opts": ["A' ∪ B'", "A' ∩ B'", "A ∩ B", "A ∪ B"], "ans": 1},
+            {"q": "The Cartesian product A × B for |A|=3 and |B|=4 has how many ordered pairs?",
+             "opts": ["7", "12", "1", "24"], "ans": 1},
+            {"q": "Two sets are disjoint when:",
+             "opts": ["Their union is empty", "Their intersection is empty", "One is a subset of the other", "They have equal cardinality"], "ans": 1},
+            {"q": "If A = B, then which is true?",
+             "opts": ["A ⊂ B only", "B ⊂ A only", "A ⊆ B and B ⊆ A", "A ∩ B = ∅"], "ans": 2},
+        ],
+        "relations": [
+            {"q": "A relation R on set A is symmetric if:",
+             "opts": ["(a,a) ∈ R for all a", "(a,b) ∈ R → (b,a) ∈ R", "(a,b),(b,c) ∈ R → (a,c) ∈ R", "None of the above"], "ans": 1},
+            {"q": "Which property requires (a,a) ∈ R for all a ∈ A?",
+             "opts": ["Symmetric", "Transitive", "Reflexive", "Antisymmetric"], "ans": 2},
+            {"q": "An equivalence relation must be:",
+             "opts": ["Reflexive only", "Reflexive and symmetric", "Reflexive, symmetric, and transitive", "Transitive only"], "ans": 2},
+            {"q": "A partial order relation is:",
+             "opts": ["Reflexive, symmetric, transitive", "Reflexive, antisymmetric, transitive", "Irreflexive, symmetric, transitive", "Symmetric and transitive only"], "ans": 1},
+            {"q": "The relation 'divides' on positive integers is antisymmetric because:",
+             "opts": ["a|b and b|a implies a=b", "a|a for all a", "a|b implies b|a", "a|b and b|c implies a|c"], "ans": 0},
+            {"q": "A relation is irreflexive if:",
+             "opts": ["(a,a) ∈ R for all a", "(a,a) ∉ R for all a", "(a,b) ∈ R → (b,a) ∉ R", "No pairs exist"], "ans": 1},
+            {"q": "The composition R∘S means:",
+             "opts": ["Apply R then S", "Apply S then R", "R union S", "R intersect S"], "ans": 1},
+            {"q": "An equivalence class [a] contains:",
+             "opts": ["Only a itself", "All elements related to a under R", "All elements of the set", "Only elements greater than a"], "ans": 1},
+            {"q": "The reflexive closure of R is obtained by adding:",
+             "opts": ["All (b,a) for (a,b) ∈ R", "All (a,a) for a ∈ A", "All transitive pairs", "Nothing"], "ans": 1},
+            {"q": "A Hasse diagram is used to represent:",
+             "opts": ["Any relation", "Equivalence relations only", "Partial orders", "Symmetric relations only"], "ans": 2},
+            {"q": "If R has n elements, its relation matrix is of size:",
+             "opts": ["n×1", "1×n", "n×n", "n²×n²"], "ans": 2},
+            {"q": "The transitive closure ensures:",
+             "opts": ["Every element relates to itself", "If aRb and bRc then aRc", "Only direct pairs remain", "All pairs are removed"], "ans": 1},
+        ],
+        "logic": [
+            {"q": "p → q is false only when:",
+             "opts": ["p is true and q is true", "p is false and q is true", "p is true and q is false", "p is false and q is false"], "ans": 2},
+            {"q": "What is the negation of p ∧ q?  (De Morgan's Law)",
+             "opts": ["¬p ∧ ¬q", "¬p ∨ ¬q", "p ∨ q", "¬(p ∨ q)"], "ans": 1},
+            {"q": "p ↔ q is true when:",
+             "opts": ["p is true", "q is false", "p and q have the same truth value", "p implies q only"], "ans": 2},
+            {"q": "A tautology is a proposition that is:",
+             "opts": ["Always false", "Sometimes true", "Always true", "Undefined"], "ans": 2},
+            {"q": "The contrapositive of p → q is:",
+             "opts": ["q → p", "¬p → ¬q", "¬q → ¬p", "p → ¬q"], "ans": 2},
+            {"q": "p ∨ ¬p is an example of a:",
+             "opts": ["Contradiction", "Contingency", "Tautology", "Predicate"], "ans": 2},
+            {"q": "p ∧ ¬p is an example of a:",
+             "opts": ["Tautology", "Contradiction", "Contingency", "Implication"], "ans": 1},
+            {"q": "The converse of p → q is:",
+             "opts": ["¬p → ¬q", "q → p", "¬q → ¬p", "p ↔ q"], "ans": 1},
+            {"q": "How many rows does a truth table with 3 variables have?",
+             "opts": ["3", "6", "8", "9"], "ans": 2},
+            {"q": "¬(p ∨ q) is logically equivalent to:",
+             "opts": ["¬p ∨ ¬q", "¬p ∧ ¬q", "p ∧ q", "¬p → q"], "ans": 1},
+            {"q": "The inverse of p → q is:",
+             "opts": ["q → p", "¬q → ¬p", "¬p → ¬q", "p ∧ ¬q"], "ans": 2},
+            {"q": "p → q is logically equivalent to:",
+             "opts": ["q → p", "¬p ∨ q", "p ∧ ¬q", "¬q ∧ p"], "ans": 1},
+        ],
+        "inference": [
+            {"q": "Modus Ponens: from p and p→q, conclude:",
+             "opts": ["¬p", "q", "¬q", "p∧q"], "ans": 1},
+            {"q": "Modus Tollens: from ¬q and p→q, conclude:",
+             "opts": ["p", "q", "¬p", "¬q"], "ans": 2},
+            {"q": "Hypothetical Syllogism combines:",
+             "opts": ["p and q directly", "p→q and q→r to get p→r", "p and ¬p", "¬p and q"], "ans": 1},
+            {"q": "Disjunctive Syllogism: from p∨q and ¬p, conclude:",
+             "opts": ["p", "¬q", "q", "p∧q"], "ans": 2},
+            {"q": "Addition rule: from p, conclude:",
+             "opts": ["p∧q", "¬p", "p∨q for any q", "p→q"], "ans": 2},
+            {"q": "Simplification: from p∧q, conclude:",
+             "opts": ["p∨q", "p (or q)", "¬p", "p→q"], "ans": 1},
+            {"q": "Conjunction rule: from p and q separately, conclude:",
+             "opts": ["p→q", "p∨q", "p∧q", "¬p∧¬q"], "ans": 2},
+            {"q": "Resolution: from p∨q and ¬p∨r, conclude:",
+             "opts": ["p∧r", "q∨r", "¬q∨r", "p∨¬r"], "ans": 1},
+            {"q": "An argument is valid when:",
+             "opts": ["All premises are true", "The conclusion is true", "True premises guarantee a true conclusion", "The argument uses many rules"], "ans": 2},
+            {"q": "Fallacy of affirming the consequent: from q and p→q, (incorrectly) concluding:",
+             "opts": ["¬p", "p", "¬q", "q→p"], "ans": 1},
+            {"q": "Which rule lets you conclude p→r from p→q and q→r?",
+             "opts": ["Modus Ponens", "Disjunctive Syllogism", "Hypothetical Syllogism", "Resolution"], "ans": 2},
+            {"q": "Universal Instantiation lets you conclude:",
+             "opts": ["∀x P(x) from P(a)", "P(a) for a specific a from ∀x P(x)", "∃x P(x) from ¬∀x ¬P(x)", "None of the above"], "ans": 1},
+        ],
+        "proofs": [
+            {"q": "In proof by contradiction, you assume:",
+             "opts": ["The conclusion is true", "The conclusion is false (¬p)", "The hypothesis is false", "Nothing at all"], "ans": 1},
+            {"q": "Proof by contrapositive proves p→q by proving:",
+             "opts": ["q→p", "¬p→¬q", "¬q→¬p", "p∧¬q → contradiction"], "ans": 2},
+            {"q": "A direct proof of p→q starts by assuming:",
+             "opts": ["¬p", "¬q", "p", "q"], "ans": 2},
+            {"q": "A constructive existence proof:",
+             "opts": ["Shows a contradiction", "Exhibits a specific example satisfying the property", "Assumes the opposite and derives falsehood", "Uses induction"], "ans": 1},
+            {"q": "Proof by cases is most useful when:",
+             "opts": ["The statement is trivially true", "The domain naturally splits into exhaustive sub-cases", "You need a single counterexample", "All variables are quantified universally"], "ans": 1},
+            {"q": "To disprove a universal statement ∀x P(x), you need:",
+             "opts": ["A proof that P(a) is true for some a", "A single counterexample where P(a) is false", "An infinite chain of implications", "A contradiction in the premises"], "ans": 1},
+            {"q": "The contrapositive of 'If n² is odd, then n is odd' is:",
+             "opts": ["If n is odd, then n² is odd", "If n is even, then n² is even", "If n² is even, then n is even", "If n is even, then n² is odd"], "ans": 2},
+            {"q": "A biconditional proof (p ↔ q) requires proving:",
+             "opts": ["Only p→q", "Only q→p", "Both p→q and q→p", "The contrapositive of p→q"], "ans": 2},
+            {"q": "A non-constructive existence proof:",
+             "opts": ["Constructs the object explicitly", "Shows the object must exist without identifying it", "Proves uniqueness", "Uses strong induction"], "ans": 1},
+            {"q": "In a uniqueness proof, after showing existence, you assume:",
+             "opts": ["The object does not exist", "Two objects satisfy the condition, then show they are equal", "The negation of the conclusion", "All objects satisfy the condition"], "ans": 1},
+            {"q": "Proof by exhaustion is valid only when:",
+             "opts": ["The statement is complex", "There are finitely many cases to check", "The domain is infinite", "Contradiction is unavoidable"], "ans": 1},
+            {"q": "Which proof technique is being used: 'Assume n is even, write n=2k, show n²=4k² is even'?",
+             "opts": ["Contradiction", "Contrapositive", "Direct proof", "Exhaustion"], "ans": 2},
+        ],
+        "induction": [
+            {"q": "Mathematical induction requires:",
+             "opts": ["Only the base case", "Only the inductive step", "Both base case and inductive step", "A contradiction"], "ans": 2},
+            {"q": "In the inductive step, you prove:",
+             "opts": ["P(1) is true", "P(k) → P(k+1)", "P(k) is false", "P(n) for all n at once"], "ans": 1},
+            {"q": "The sum 1+2+...+n equals:",
+             "opts": ["n²", "n(n+1)/2", "n(n−1)/2", "2n"], "ans": 1},
+            {"q": "Strong induction assumes:",
+             "opts": ["P(1) only", "P(k) for a single k", "P(1), P(2), …, P(k) all true to prove P(k+1)", "Nothing about previous cases"], "ans": 2},
+            {"q": "The base case in induction serves to:",
+             "opts": ["Complete the proof alone", "Anchor the chain at the starting value", "Replace the inductive step", "Prove uniqueness"], "ans": 1},
+            {"q": "What is the sum 1²+2²+…+n²?",
+             "opts": ["n(n+1)/2", "n(n+1)(2n+1)/6", "n²(n+1)²/4", "n(n+1)(n+2)/6"], "ans": 1},
+            {"q": "The inductive hypothesis is:",
+             "opts": ["The conclusion we want to prove", "The assumption that P(k) is true for some k ≥ base", "The base case", "A counterexample"], "ans": 1},
+            {"q": "Which sequence is best proved by strong induction?",
+             "opts": ["Arithmetic sequences", "Geometric sequences", "Fibonacci-type recurrences", "Constant sequences"], "ans": 2},
+            {"q": "If base case is n=0 and inductive step proves P(k)→P(k+1), induction holds for:",
+             "opts": ["n ≥ 1 only", "n ≥ 0", "n = 0 only", "All integers"], "ans": 1},
+            {"q": "The sum of first n odd numbers 1+3+5+…+(2n−1) equals:",
+             "opts": ["n(n+1)/2", "n²", "2n−1", "n(2n−1)"], "ans": 1},
+            {"q": "Structural induction is used to prove properties of:",
+             "opts": ["Real numbers", "Recursively defined structures (trees, lists)", "Finite sets only", "Prime numbers"], "ans": 1},
+            {"q": "To prove 3ⁿ > 2n+1 for n ≥ 2 by induction, the base case checks:",
+             "opts": ["n=0", "n=1", "n=2", "n=3"], "ans": 2},
+        ],
+        "sequences": [
+            {"q": "In arithmetic sequence with first term a₁ and difference d, the nth term is:",
+             "opts": ["a₁ + nd", "a₁ + (n−1)d", "a₁ · dⁿ", "a₁ · (n−1)"], "ans": 1},
+            {"q": "F(5) in the Fibonacci sequence (F(1)=F(2)=1) is:",
+             "opts": ["5", "6", "7", "8"], "ans": 0},
+            {"q": "A geometric sequence is characterised by:",
+             "opts": ["Constant difference", "Constant ratio between consecutive terms", "Alternating signs", "Constant partial sum"], "ans": 1},
+            {"q": "The sum of a finite geometric series a + ar + ar² + … + arⁿ⁻¹ is:",
+             "opts": ["a(rⁿ+1)/(r+1)", "a(rⁿ−1)/(r−1) for r≠1", "arⁿ", "a/(1−r)"], "ans": 1},
+            {"q": "What is the 7th term of the sequence 2, 5, 8, 11, …?",
+             "opts": ["20", "23", "17", "14"], "ans": 0},
+            {"q": "The sum Σᵢ₌₁ⁿ i³ equals:",
+             "opts": ["n²(n+1)²/4", "n(n+1)(2n+1)/6", "n(n+1)/2", "n³"], "ans": 0},
+            {"q": "F(7) in the Fibonacci sequence (F(1)=F(2)=1) is:",
+             "opts": ["11", "13", "8", "21"], "ans": 1},
+            {"q": "An infinite geometric series a/(1−r) converges when:",
+             "opts": ["|r| > 1", "|r| = 1", "|r| < 1", "r = 0 only"], "ans": 2},
+            {"q": "The common difference d of the sequence 4, 7, 10, 13, … is:",
+             "opts": ["2", "3", "4", "7"], "ans": 1},
+            {"q": "Σᵢ₌₁⁵ i equals:",
+             "opts": ["10", "15", "20", "25"], "ans": 1},
+            {"q": "A sequence defined by aₙ = aₙ₋₁ + aₙ₋₂ is called:",
+             "opts": ["Arithmetic", "Geometric", "Fibonacci-type / linear recurrence", "Harmonic"], "ans": 2},
+            {"q": "The sum of the first 100 natural numbers is:",
+             "opts": ["5000", "5050", "4950", "10100"], "ans": 1},
+        ],
+        "combinatorics": [
+            {"q": "How many ways to arrange 5 distinct objects in a row?",
+             "opts": ["5", "25", "120", "60"], "ans": 2},
+            {"q": "C(5,2) equals:",
+             "opts": ["10", "20", "5", "25"], "ans": 0},
+            {"q": "The Pigeonhole Principle states:",
+             "opts": ["n objects in n holes → all equal", "n+1 objects in n holes → some hole has ≥2", "n objects need n² holes", "All of the above"], "ans": 1},
+            {"q": "P(n,r) = n!/(n−r)! counts:",
+             "opts": ["Unordered subsets of size r", "Ordered arrangements of r items from n", "Subsets including repetition", "Circular arrangements"], "ans": 1},
+            {"q": "How many ways can a committee of 3 be chosen from 7 people?",
+             "opts": ["21", "35", "210", "42"], "ans": 1},
+            {"q": "The number of ways to arrange the letters of 'AABB' (with repetition) is:",
+             "opts": ["24", "12", "6", "4"], "ans": 2},
+            {"q": "By the multiplication principle, if event A has 4 outcomes and event B has 5, the number of combined outcomes is:",
+             "opts": ["9", "20", "1", "45"], "ans": 1},
+            {"q": "The binomial coefficient C(n,0) equals:",
+             "opts": ["0", "n", "1", "n!"], "ans": 2},
+            {"q": "How many 4-digit PINs are possible using digits 0–9 with repetition allowed?",
+             "opts": ["5040", "210", "10000", "9999"], "ans": 2},
+            {"q": "Inclusion-Exclusion: |A ∪ B| equals:",
+             "opts": ["|A| + |B|", "|A| + |B| − |A∩B|", "|A| × |B|", "|A| − |B|"], "ans": 1},
+            {"q": "The number of permutations of n objects in a circle is:",
+             "opts": ["n!", "(n−1)!", "n!/2", "n²"], "ans": 1},
+            {"q": "Stars and bars gives the number of ways to distribute k identical objects into n distinct bins as:",
+             "opts": ["C(k,n)", "C(n+k−1, k)", "P(n,k)", "k^n"], "ans": 1},
+        ],
+        "graphs": [
+            {"q": "The degree of a vertex is:",
+             "opts": ["Its index in the adjacency list", "Number of edges incident to it", "Number of vertices it equals", "Its distance from source"], "ans": 1},
+            {"q": "An Eulerian path visits:",
+             "opts": ["Every vertex exactly once", "Every edge exactly once", "Every vertex twice", "Only leaf vertices"], "ans": 1},
+            {"q": "Complete graph Kₙ has how many edges?",
+             "opts": ["n", "n²", "n(n−1)/2", "2n"], "ans": 2},
+            {"q": "The Handshaking Lemma states: Σ deg(v) =",
+             "opts": ["|V|", "|E|", "2|E|", "|V| × |E|"], "ans": 2},
+            {"q": "A graph is bipartite if:",
+             "opts": ["Every vertex has even degree", "Vertices can be split into two sets with edges only between sets", "It has no cycles", "It is complete"], "ans": 1},
+            {"q": "A Hamiltonian path visits:",
+             "opts": ["Every edge exactly once", "Every vertex exactly once", "Only even-degree vertices", "Adjacent vertices twice"], "ans": 1},
+            {"q": "An Eulerian circuit exists if and only if:",
+             "opts": ["The graph is connected and all vertices have even degree", "The graph has no cycles", "All vertices have degree 2", "The graph is a tree"], "ans": 0},
+            {"q": "A tree with n vertices has exactly how many edges?",
+             "opts": ["n", "n+1", "n−1", "2n"], "ans": 2},
+            {"q": "Two graphs are isomorphic if:",
+             "opts": ["They have the same number of vertices", "There exists a structure-preserving bijection between their vertex sets", "They have the same edge weights", "They look identical when drawn"], "ans": 1},
+            {"q": "The chromatic number χ(G) of a graph is:",
+             "opts": ["The number of edges", "The minimum number of colours needed to colour vertices so adjacent ones differ", "The maximum degree", "The number of cycles"], "ans": 1},
+            {"q": "A connected acyclic graph is called:",
+             "opts": ["A bipartite graph", "A complete graph", "A tree", "A multigraph"], "ans": 2},
+            {"q": "Breadth-First Search (BFS) is used to find:",
+             "opts": ["Minimum spanning trees only", "The shortest path in an unweighted graph", "Eulerian circuits", "Graph colouring"], "ans": 1},
+        ],
+    }
+
+    PRACTICE_DATA = {
+        "sets": [
+            {"q": "Let A = {1,2,3,4} and B = {3,4,5,6}. Find A∩B, A∪B, and A−B.",
+             "sol": "Step 1: List elements of A and B.\nA = {1,2,3,4}, B = {3,4,5,6}.\nStep 2: Find intersection (A∩B): Elements in both A and B are {3,4}.\nStep 3: Find union (A∪B): Combine all unique elements: {1,2,3,4,5,6}.\nStep 4: Find difference (A−B): Elements in A not in B are {1,2}.\nFinal answers: A∩B = {3,4}, A∪B = {1,2,3,4,5,6}, A−B = {1,2}."},
+            {"q": "If U = {1…10}, A = {2,4,6,8}, B = {1,2,3,4}, find A' and (A∪B)'.",
+             "sol": "Step 1: List universal set U = {1,2,3,4,5,6,7,8,9,10}.\nStep 2: Find complement of A (A'): Elements in U not in A: {1,3,5,7,9,10}.\nStep 3: Find union A∪B: {1,2,3,4,6,8}.\nStep 4: Find complement of (A∪B): Elements in U not in A∪B: {5,7,9,10}.\nFinal answers: A' = {1,3,5,7,9,10}, (A∪B)' = {5,7,9,10}."},
+        ],
+        "relations": [
+            {"q": "R = {(1,1),(1,2),(2,1),(2,2),(3,3)} on A={1,2,3}. Is R reflexive, symmetric, transitive?",
+             "sol": "Step 1: Reflexive? Check if (a,a) for all a in A. (1,1), (2,2), (3,3) are present. Yes.\nStep 2: Symmetric? For every (a,b), is (b,a) present? (1,2) and (2,1) are both present. Yes.\nStep 3: Transitive? For (a,b) and (b,c), is (a,c) present? (1,2)+(2,1)→(1,1), (2,1)+(1,2)→(2,2), all such cases are present. Yes.\nConclusion: R is reflexive, symmetric, and transitive, so it is an equivalence relation."},
+            {"q": "Find the transitive closure of R = {(1,2),(2,3)} on {1,2,3}.",
+             "sol": "Step 1: List pairs: (1,2), (2,3).\nStep 2: Check for indirect connections: (1,2) and (2,3) imply (1,3) by transitivity.\nStep 3: Add (1,3) to the relation.\nFinal answer: Transitive closure = {(1,2), (2,3), (1,3)}."},
+        ],
+        "logic": [
+            {"q": "Construct a truth table for (p → q) ∧ (q → p).",
+             "sol": "Step 1: List all combinations of p and q (TT, TF, FT, FF).\nStep 2: Compute p→q and q→p for each row.\nStep 3: Take AND of both results for each row.\nStep 4: Observe that (p→q)∧(q→p) is true only when p and q have the same value (TT or FF), so it is equivalent to p↔q.\nTruth table:\np q | (p→q) | (q→p) | AND\nT T |   T   |   T   |  T\nT F |   F   |   T   |  F\nF T |   T   |   F   |  F\nF F |   T   |   T   |  T"},
+            {"q": "Show ¬(p ∧ q) ≡ ¬p ∨ ¬q using a truth table.",
+             "sol": "Step 1: List all combinations of p and q.\nStep 2: Compute p∧q for each row.\nStep 3: Compute ¬(p∧q) for each row.\nStep 4: Compute ¬p and ¬q, then (¬p∨¬q) for each row.\nStep 5: Compare columns: they are identical in all cases.\nConclusion: ¬(p∧q) ≡ ¬p∨¬q (De Morgan's Law)."},
+        ],
+        "inference": [
+            {"q": "'If it rains, the ground is wet.' It is raining. Conclude using Modus Ponens.",
+             "sol": "Step 1: Premise: If it rains, the ground is wet (p→q).\nStep 2: Premise: It is raining (p is true).\nStep 3: By Modus Ponens, since p→q and p, conclude q.\nConclusion: The ground is wet."},
+            {"q": "Given p→q, q→r, p. Derive r step by step.",
+             "sol": "Step 1: p (given).\nStep 2: p→q (given).\nStep 3: By Modus Ponens on steps 1 and 2, q is true.\nStep 4: q→r (given).\nStep 5: By Modus Ponens on steps 3 and 4, r is true.\nConclusion: r is derived."},
+        ],
+        "proofs": [
+            {"q": "Prove: If n is odd, then n² is odd. (Direct proof)",
+             "sol": "Step 1: Let n be odd, so n = 2k+1 for some integer k.\nStep 2: Compute n² = (2k+1)² = 4k² + 4k + 1.\nStep 3: Factor: 4k² + 4k = 2(2k²+2k), so n² = 2(2k²+2k) + 1.\nStep 4: This is of the form 2m+1, which is odd.\nConclusion: n² is odd if n is odd."},
+            {"q": "Prove √2 is irrational by contradiction.",
+             "sol": "Step 1: Assume √2 is rational, so √2 = p/q in lowest terms.\nStep 2: Square both sides: 2 = p²/q² → 2q² = p².\nStep 3: p² is even, so p must be even. Let p = 2m.\nStep 4: Substitute: 2q² = (2m)² = 4m² → q² = 2m², so q² is even, so q is even.\nStep 5: Both p and q are even, contradicting lowest terms.\nConclusion: √2 is irrational."},
+        ],
+        "induction": [
+            {"q": "Prove by induction: 1+2+…+n = n(n+1)/2.",
+             "sol": "Step 1: Base case n=1: 1 = 1·2/2 = 1. True.\nStep 2: Inductive step: Assume true for n=k, so 1+2+...+k = k(k+1)/2.\nStep 3: For n=k+1: 1+2+...+k+(k+1) = k(k+1)/2 + (k+1) = (k+1)(k+2)/2.\nStep 4: Therefore, true for n=k+1.\nConclusion: The formula holds for all n by induction."},
+            {"q": "Prove by induction: 2ⁿ > n for all n ≥ 1.",
+             "sol": "Step 1: Base case n=1: 2^1=2 > 1. True.\nStep 2: Inductive step: Assume 2^k > k for some k≥1.\nStep 3: For n=k+1: 2^(k+1) = 2·2^k > 2k.\nStep 4: Since 2k ≥ k+1 for k≥1, 2^(k+1) > k+1.\nConclusion: 2ⁿ > n for all n≥1 by induction."},
+        ],
+        "sequences": [
+            {"q": "Find the 10th term of: 3, 7, 11, 15, …",
+             "sol": "Step 1: Identify first term a₁=3 and common difference d=4.\nStep 2: Use formula aₙ = a₁ + (n−1)d.\nStep 3: For n=10: a₁₀ = 3 + 9×4 = 3 + 36 = 39.\nFinal answer: 39."},
+            {"q": "What is the sum of the first 20 natural numbers?",
+             "sol": "Step 1: Use formula for sum: Sₙ = n(n+1)/2.\nStep 2: For n=20: S = 20×21/2 = 210.\nFinal answer: 210."},
+        ],
+        "combinatorics": [
+            {"q": "How many 3-letter arrangements can be made from the letters M, A, T, H?",
+             "sol": "Step 1: Number of letters = 4.\nStep 2: Number of ways to arrange 3 out of 4 = P(4,3).\nStep 3: P(4,3) = 4!/(4−3)! = 24.\nFinal answer: 24."},
+            {"q": "A committee of 4 is chosen from 10 people. How many ways?",
+             "sol": "Step 1: Number of people = 10.\nStep 2: Number to choose = 4.\nStep 3: Use combinations: C(10,4) = 10!/(4!·6!) = 210.\nFinal answer: 210."},
+        ],
+        "graphs": [
+            {"q": "K₄ has how many edges? Verify with the formula.",
+             "sol": "Step 1: K₄ is a complete graph with n=4 vertices.\nStep 2: Use formula for edges: n(n−1)/2.\nStep 3: 4×3/2 = 6.\nFinal answer: 6 edges."},
+            {"q": "Does a graph with degree sequence (2,2,2,2,2,2) have an Eulerian circuit?",
+             "sol": "Step 1: Eulerian circuit exists if all vertices have even degree and the graph is connected.\nStep 2: All degrees are 2 (even).\nStep 3: If the graph is connected, Euler's Theorem applies.\nConclusion: Yes, an Eulerian circuit exists."},
+        ],
+    }
+
+    # ── Session state init ────────────────────────────────────
+    if "sh_progress" not in st.session_state:
+        st.session_state.sh_progress = {
+            k: {"read": False, "quiz_score": None, "practice_done": False}
+            for k, *_ in STUDY_TOPICS
+        }
+    if "sh_quiz_ans" not in st.session_state:
+        st.session_state.sh_quiz_ans = {}
+    if "sh_quiz_submitted" not in st.session_state:
+        st.session_state.sh_quiz_submitted = {}
+    if "sh_show_sol" not in st.session_state:
+        st.session_state.sh_show_sol = {}
+
+    prog = st.session_state.sh_progress
+
+    # ── Helper: per-topic completion score 0-3 ───────────────
+    def topic_score(k):
+        p = prog[k]
+        s = 0
+        if p["read"]: s += 1
+        if p["quiz_score"] is not None: s += 1
+        if p["practice_done"]: s += 1
+        return s
+
+    total_topics = len(STUDY_TOPICS)
+    topics_explored = sum(1 for k, *_ in STUDY_TOPICS if topic_score(k) > 0)
+    quizzes_taken   = sum(1 for k, *_ in STUDY_TOPICS if prog[k]["quiz_score"] is not None)
+    best_score      = max((prog[k]["quiz_score"] or 0) for k, *_ in STUDY_TOPICS)
+    best_pct        = round(best_score / len(QUIZ_DATA[max(STUDY_TOPICS, key=lambda t: prog[t[0]]["quiz_score"] or 0)[0]]) * 100) if best_score else 0
+    overall_pct     = round(sum(topic_score(k) for k, *_ in STUDY_TOPICS) / (total_topics * 3) * 100)
+
+    # ── Achievements ─────────────────────────────────────────
+    achievements = [
+        ("First Step",   "◉", any(prog[k]["read"] for k, *_ in STUDY_TOPICS)),
+        ("Quiz Taker",   "✎", quizzes_taken >= 1),
+        ("Half Way",     "◑", overall_pct >= 50),
+        ("Quiz Master",  "★", best_pct == 100),
+        ("Practice Pro", "⚙", all(prog[k]["practice_done"] for k, *_ in STUDY_TOPICS)),
+        ("Graduate",     "◆", overall_pct == 100),
+    ]
+
+    # ── Page header ───────────────────────────────────────────
+    st.markdown("<div class='sec-tag'>// STUDY_HUB · YOUR_LEARNING_SPACE</div>", unsafe_allow_html=True)
+    st.markdown("## Your Learning Journey")
+    st.markdown("""
+    <p style='color:#8892a4;max-width:700px;'>
+    Track your progress across all topics, follow the structured learning roadmap,
+    and dive into explanations, quizzes, and practice problems — all in one place.
+    </p>""", unsafe_allow_html=True)
+    st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+    tab_dash, tab_road, tab_session = st.tabs(["📊  Progress Dashboard", "🗺  Learning Roadmap", "📖  Study Session"])
+
+    # ══════════════════════════════════════════════════════════
+    # TAB 1 — PROGRESS DASHBOARD
+    # ══════════════════════════════════════════════════════════
+    with tab_dash:
+        # Stat cards
+        st.markdown(f"""
+        <div class='sh-stat-grid'>
+          <div class='sh-stat'>
+            <div class='sh-stat-val'>{overall_pct}%</div>
+            <div class='sh-stat-lbl'>Overall Progress</div>
+          </div>
+          <div class='sh-stat'>
+            <div class='sh-stat-val'>{topics_explored}</div>
+            <div class='sh-stat-lbl'>Topics Explored / {total_topics}</div>
+          </div>
+          <div class='sh-stat'>
+            <div class='sh-stat-val'>{quizzes_taken}</div>
+            <div class='sh-stat-lbl'>Quizzes Taken</div>
+          </div>
+          <div class='sh-stat'>
+            <div class='sh-stat-val'>{best_pct}%</div>
+            <div class='sh-stat-lbl'>Best Quiz Score</div>
+          </div>
+        </div>""", unsafe_allow_html=True)
+
+        # Overall mastery bar
+        st.markdown(f"""
+        <div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;'>
+          <span style='font-size:0.88rem;font-weight:600;color:#e8eaf0;'>Overall Mastery</span>
+          <span style='font-family:"JetBrains Mono",monospace;font-size:0.75rem;color:#4ECCA3;'>{overall_pct}%</span>
+        </div>
+        <div class='sh-bar-wrap' style='height:8px;margin-bottom:1.5rem;'>
+          <div class='sh-bar-fill' style='width:{overall_pct}%;'></div>
+        </div>""", unsafe_allow_html=True)
+
+        # Achievements
+        st.markdown("<div class='sec-tag'>// ACHIEVEMENTS</div>", unsafe_allow_html=True)
+        ach_html = "<div class='sh-ach-grid'>"
+        for name, icon, earned in achievements:
+            cls = "earned" if earned else "locked"
+            lock = "" if earned else "🔒 "
+            ach_html += f"<div class='sh-ach {cls}'>{lock}{icon} {name}</div>"
+        ach_html += "</div>"
+        st.markdown(ach_html, unsafe_allow_html=True)
+
+        st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+        # Topic breakdown
+        st.markdown("<div class='sec-tag'>// TOPIC_BREAKDOWN</div>", unsafe_allow_html=True)
+        for key, label, icon, week in STUDY_TOPICS:
+            p = prog[key]
+            sc = topic_score(key)
+            pct = round(sc / 3 * 100)
+            read_cls  = "done" if p["read"]           else "todo"
+            quiz_cls  = "done" if p["quiz_score"] is not None else "todo"
+            prac_cls  = "done" if p["practice_done"]  else "todo"
+            quiz_lbl  = f"{round(p['quiz_score']/len(QUIZ_DATA[key])*100)}%" if p["quiz_score"] is not None else "Quiz"
+            st.markdown(f"""
+            <div class='sh-topic-row'>
+              <span style='font-size:1.1rem;color:#4ECCA3;width:22px;text-align:center;'>{icon}</span>
+              <span class='sh-topic-name'>{label}</span>
+              <div class='sh-topic-pills'>
+                <span class='sh-pill {read_cls}'>READ</span>
+                <span class='sh-pill {quiz_cls}'>{quiz_lbl}</span>
+                <span class='sh-pill {prac_cls}'>PRACTICE</span>
+              </div>
+              <div style='width:120px;'>
+                <div style='display:flex;justify-content:space-between;margin-bottom:3px;'>
+                  <span style='font-family:"JetBrains Mono",monospace;font-size:0.6rem;color:#4a5568;'>{week}</span>
+                  <span style='font-family:"JetBrains Mono",monospace;font-size:0.6rem;color:#4ECCA3;'>{pct}%</span>
+                </div>
+                <div class='sh-bar-wrap'><div class='sh-bar-fill' style='width:{pct}%;'></div></div>
+              </div>
+            </div>""", unsafe_allow_html=True)
+
+    # ══════════════════════════════════════════════════════════
+    # TAB 2 — LEARNING ROADMAP
+    # ══════════════════════════════════════════════════════════
+    with tab_road:
+        topic_map = {k: (lbl, icon, week) for k, lbl, icon, week in STUDY_TOPICS}
+        st.markdown("""
+        <p style='text-align:center;color:#8892a4;font-size:0.85rem;'>
+        Follow this structured path from foundations to advanced topics.<br>
+        Each node shows your completion progress.
+        </p>""", unsafe_allow_html=True)
+
+        for gi, (group_name, keys) in enumerate(ROADMAP_GROUPS):
+            nodes_html = ""
+            for k in keys:
+                lbl, icon, week = topic_map[k]
+                sc  = topic_score(k)
+                pct = round(sc / 3 * 100)
+                nodes_html += f"""
+<div class='sh-road-node'>
+  <div class='sh-road-icon'>{icon}</div>
+  <div class='sh-road-name'>{lbl}</div>
+  <div class='sh-road-week'>{week}</div>
+  <div class='sh-road-prog'>
+    <div class='sh-bar-wrap'><div class='sh-bar-fill' style='width:{pct}%;'></div></div>
+    <div style='font-family:"JetBrains Mono",monospace;font-size:0.58rem;color:#4ECCA3;margin-top:3px;'>{pct}%</div>
+  </div>
+</div>"""
+
+            st.markdown(f"""
+            <div class='sh-road-group'>
+              <div class='sh-road-label'>{group_name}</div>
+              <div class='sh-road-row'>{nodes_html}</div>
+            </div>""", unsafe_allow_html=True)
+
+            if gi < len(ROADMAP_GROUPS) - 1:
+                st.markdown("<div class='sh-arrow'>↓</div>", unsafe_allow_html=True)
+
+    # ══════════════════════════════════════════════════════════
+    # TAB 3 — STUDY SESSION
+    # ══════════════════════════════════════════════════════════
+    with tab_session:
+        topic_labels  = {k: lbl for k, lbl, *_ in STUDY_TOPICS}
+        topic_options = [lbl for _, lbl, *_ in STUDY_TOPICS]
+        topic_keys    = [k   for k, *_ in STUDY_TOPICS]
+
+        col_sel, col_mode = st.columns([1, 2])
+        with col_sel:
+            chosen_label = st.selectbox("Topic", topic_options, key="sh_topic_sel",
+                                        label_visibility="visible")
+        chosen_key = topic_keys[topic_options.index(chosen_label)]
+
+        with col_mode:
+            mode = st.radio("Study Mode", ["📘 Read & Learn", "✏️ Take a Quiz", "💪 Practice Problems"],
+                            horizontal=True, key="sh_mode_sel", label_visibility="visible")
+
+        st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+        # ── READ & LEARN ────────────────────────────────────
+        if mode == "📘 Read & Learn":
+            st.markdown(f"""
+            <div class='sh-overview'>
+              <div class='sh-overview-tag'>OVERVIEW</div>
+              <div class='sh-overview-text'>{TOPIC_OVERVIEWS[chosen_key]}</div>
+            </div>""", unsafe_allow_html=True)
+
+            st.markdown("### Key Concepts")
+            concepts = TOPIC_CONCEPTS[chosen_key]
+            rows = [concepts[i:i+2] for i in range(0, len(concepts), 2)]
+            for row in rows:
+                cols = st.columns(len(row))
+                for ci, (title, body) in enumerate(row):
+                    with cols[ci]:
+                        st.markdown(f"""
+                        <div class='sh-concept-card'>
+                          <div class='sh-concept-title'>{title}</div>
+                          <div class='sh-concept-body'>{body}</div>
+                        </div>""", unsafe_allow_html=True)
+
+            st.markdown("")
+            if st.button("✓ Mark as Read", key=f"sh_read_{chosen_key}",
+                         type="primary" if not prog[chosen_key]["read"] else "secondary"):
+                st.session_state.sh_progress[chosen_key]["read"] = True
+                st.success(f"'{chosen_label}' marked as read!")
+                st.rerun()
+
+            if prog[chosen_key]["read"]:
+                st.markdown("<span style='color:#4ECCA3;font-family:\"JetBrains Mono\",monospace;font-size:0.75rem;'>✓ COMPLETED — READING DONE</span>", unsafe_allow_html=True)
+
+        # ── TAKE A QUIZ ─────────────────────────────────────
+        elif mode == "✏️ Take a Quiz":
+            questions = QUIZ_DATA[chosen_key]
+            qkey = f"quiz_{chosen_key}"
+            submitted = st.session_state.sh_quiz_submitted.get(qkey, False)
+
+            if submitted:
+                answers = st.session_state.sh_quiz_ans.get(qkey, {})
+                score = sum(1 for i, qd in enumerate(questions) if answers.get(i) == qd["opts"][qd["ans"]])
+                pct = round(score / len(questions) * 100)
+                st.markdown(f"""
+                <div class='sh-stat' style='max-width:320px;margin-bottom:1.5rem;'>
+                  <div class='sh-stat-val'>{score}/{len(questions)}</div>
+                  <div class='sh-stat-lbl'>{pct}% — {'Perfect! ◆' if pct==100 else 'Good effort' if pct>=66 else 'Keep practising'}</div>
+                </div>""", unsafe_allow_html=True)
+
+                for i, qd in enumerate(questions):
+                    user_ans = answers.get(i)
+                    correct  = qd["opts"][qd["ans"]]
+                    ok = user_ans == correct
+                    colour = "#4ECCA3" if ok else "#ff6b6b"
+                    icon_r  = "✓" if ok else "✗"
+                    st.markdown(f"""
+                    <div class='sh-quiz-q' style='border-left:3px solid {colour};'>
+                      <div class='sh-quiz-num'>Q{i+1}</div>
+                      <div class='sh-quiz-text'>{qd["q"]}</div>
+                      <div style='font-size:0.8rem;color:{colour};margin-top:0.5rem;font-family:"JetBrains Mono",monospace;'>
+                        {icon_r} Your answer: {user_ans or "—"}<br>
+                        {'✓ Correct!' if ok else f'Correct: {correct}'}
+                      </div>
+                    </div>""", unsafe_allow_html=True)
+
+                if st.button("Retake Quiz", key=f"sh_retry_{chosen_key}"):
+                    st.session_state.sh_quiz_submitted[qkey] = False
+                    st.session_state.sh_quiz_ans[qkey] = {}
+                    st.rerun()
+
+            else:
+                if qkey not in st.session_state.sh_quiz_ans:
+                    st.session_state.sh_quiz_ans[qkey] = {}
+
+                for i, qd in enumerate(questions):
+                    st.markdown(f"""
+                    <div class='sh-quiz-q'>
+                      <div class='sh-quiz-num'>QUESTION {i+1} / {len(questions)}</div>
+                      <div class='sh-quiz-text'>{qd["q"]}</div>
+                    </div>""", unsafe_allow_html=True)
+                    chosen_opt = st.radio(
+                        f"q{i}", qd["opts"], index=None,
+                        key=f"sh_q_{chosen_key}_{i}",
+                        label_visibility="collapsed"
+                    )
+                    if chosen_opt:
+                        st.session_state.sh_quiz_ans[qkey][i] = chosen_opt
+
+                st.markdown("")
+                if st.button("Submit Quiz", key=f"sh_submit_{chosen_key}", type="primary"):
+                    answers = st.session_state.sh_quiz_ans.get(qkey, {})
+                    if len(answers) < len(questions):
+                        st.warning("Please answer all questions before submitting.")
+                    else:
+                        score = sum(1 for i, qd in enumerate(questions) if answers.get(i) == qd["opts"][qd["ans"]])
+                        st.session_state.sh_progress[chosen_key]["quiz_score"] = score
+                        st.session_state.sh_quiz_submitted[qkey] = True
+                        st.rerun()
+
+        # ── PRACTICE PROBLEMS ──────────────────────────────
+        elif mode == "💪 Practice Problems":
+            problems = PRACTICE_DATA[chosen_key]
+            show_key = f"sol_{chosen_key}"
+            if show_key not in st.session_state.sh_show_sol:
+                st.session_state.sh_show_sol[show_key] = set()
+
+            st.markdown(f"<div class='sec-tag'>// {len(problems)} PRACTICE PROBLEMS — {chosen_label.upper()}</div>", unsafe_allow_html=True)
+
+            for i, prob in enumerate(problems):
+                st.markdown(f"""
+                <div class='sh-practice-card'>
+                  <div style='font-family:"JetBrains Mono",monospace;font-size:0.6rem;color:#4ECCA3;margin-bottom:0.4rem;'>PROBLEM {i+1}</div>
+                  <div class='sh-practice-q'>{prob["q"]}</div>
+                </div>""", unsafe_allow_html=True)
+
+                if i in st.session_state.sh_show_sol[show_key]:
+                    st.markdown(f"<div class='sh-practice-sol'>{prob['sol']}</div>", unsafe_allow_html=True)
+                    st.markdown("")
+                else:
+                    if st.button(f"Show Solution", key=f"sh_sol_{chosen_key}_{i}"):
+                        st.session_state.sh_show_sol[show_key].add(i)
+                        st.rerun()
+                st.markdown("")
+
+            all_revealed = len(st.session_state.sh_show_sol.get(show_key, set())) == len(problems)
+            if all_revealed and not prog[chosen_key]["practice_done"]:
+                if st.button("✓ Mark Practice Complete", key=f"sh_prac_{chosen_key}", type="primary"):
+                    st.session_state.sh_progress[chosen_key]["practice_done"] = True
+                    st.success("Practice marked as complete!")
+                    st.rerun()
+
+            if prog[chosen_key]["practice_done"]:
+                st.markdown("<span style='color:#4ECCA3;font-family:\"JetBrains Mono\",monospace;font-size:0.75rem;'>✓ PRACTICE COMPLETE</span>", unsafe_allow_html=True)
+
+# ── Footer (all pages) ───────────────────────────────────
 st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
-st.markdown("""
-<div style='text-align:center;padding:2rem 0 1rem;'>
-  <div style='font-family:"JetBrains Mono",monospace;font-size:0.72rem;color:#4ECCA3;letter-spacing:0.05em;'>
-    DISCRETE STRUCTURES: THE ARCHITECTURE OF LOGIC
-  </div>
-  <div style='font-family:"JetBrains Mono",monospace;font-size:0.65rem;color:#4a5568;margin-top:0.6rem;'>
-    <span style='color:#8892a4;'>Farhan Haroon</span> · FA25-BSAI-0060 &nbsp;|&nbsp;
-    <span style='color:#8892a4;'>Huzaifa Zaki</span> · FA25-BSAI-0051 &nbsp;|&nbsp;
-    <span style='color:#8892a4;'>Bissam ul Haq</span> · FA25-BSAI-0076 &nbsp;|&nbsp;
-    <span style='color:#8892a4;'>Aaleen</span> · FA25-BSAI-0077
-  </div>
-  <div style='margin-top:0.8rem;font-size:0.65rem;color:#2a2d4a;'>∀x [ Discrete(x) → Beautiful(x) ] — BSAI · CS Department</div>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(FOOTER_HTML, unsafe_allow_html=True)
+
